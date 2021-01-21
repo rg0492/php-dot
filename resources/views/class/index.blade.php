@@ -16,7 +16,13 @@
         {{ session()->get('message') }}
     </div>
 	@endif
-   
+	<form method="get" action="{{route('class.index')}}">
+    <input type="text" name="search">
+    <input type="submit" class="btn btn-primary">
+    <a href="{{route('class.index')}}" class="btn btn-danger">Reset</a>
+    </form>
+    <br>
+    <br>
     <table class="table table-striped">
         <tr>
             <th>College</th>
@@ -28,7 +34,7 @@
         <tr>
             <td>{{ $value->college->name }}</td>
             <td>{{ $value->title }}</td>
-            <td>{{ $value->levels }}</td>
+            <td>{{ isset($value->level['0']->name)?$value->level['0']->name:''}}</td>
             <td>
                 <form action="{{ route('class.destroy',$value->id) }}" method="POST">
                     <a class="btn btn-info" href="{{asset($value->syllabus)}}" download  data-id="{{$value->id}}"><i class="fa fa-download"></i></a>

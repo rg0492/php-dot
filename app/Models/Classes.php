@@ -12,4 +12,8 @@ class Classes extends Model
     public function college(){
         return $this->belongsTo('App\Models\College','college_id','id');
     }
+
+    public function level(){
+        return $this->hasMany('App\Models\Levels','class_id','id');
+    }
 }

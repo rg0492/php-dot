@@ -70,11 +70,12 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <div class="col-lg-4 form-group-sub" id="levels">
+                                <div class="col-lg-4 form-group-sub cloned-input" id="levels">
                                     <label class="form-control-label">Levels:<span
                                             class="kt-font-danger kt-font-bold"></span></label>
-                                    <input type="text" class="form-control" name="levels" placeholder="Enter name" value="">
+                                    <input type="text" class="form-control" name="levels[]" placeholder="Enter name" value="">
                                 </div>
+                                <a id="clonedInput">Add</a>
                             </div>
                             <div class="form-group row">
                                 <div class="col-lg-4 form-group-sub">
@@ -101,3 +102,25 @@
                 </div>
                 </form>
 @endsection
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+
+ $('#clonedInput').click(function(){
+  // Create clone of <div class='cloned-input'>
+  var newel = $('.cloned-input:last').clone();
+
+  // Add after last <div class='cloned-input'>
+  $(newel).insertAfter(".cloned-input:last");
+ });
+
+ $('.txt').focus(function(){
+  $(this).css('border-color','red');
+ });
+ 
+ $('.txt').focusout(function(){
+  $(this).css('border-color','initial');
+ });
+
+});
+</script>

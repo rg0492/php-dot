@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\College;
 use App\Models\Classes;
+use App\Models\Levels;
 
 class ClassController extends Controller
 {
@@ -13,9 +14,17 @@ class ClassController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $class = Classes::with(['college'])->paginate(5);
+        $general_search = $request->get('search');
+        $query = Classes::with(['college','level']);
+        if ($general_search && $general_search != '') {
+            $query = $query->where(function ($query) use ($general_search) {
+                $query->where('title', 'LIKE', '%' . $general_search . '%');
+                $query->orWhere('email', 'LIKE', '%' . $general_search . '%');
+            });
+        }
+        $class = $query->orderBy('id', 'desc')->paginate(5);
         return view('class.index',compact('class'));
     }
 
@@ -38,8 +47,8 @@ class ClassController extends Controller
      */
     public function store(Request $request)
     {
-
         $request->validate([
+            'college' => 'required',
             'title' => 'required',
             'price' => 'required',
             'email' => 'required|email',
@@ -55,7 +64,6 @@ class ClassController extends Controller
         $class->contact_number = $request->contact_number;
         $class->email = $request->email;
         $class->price = $request->price;
-        $class->levels = $request->levels;
         $class->description = $request->description;
         if($request->file('syllabus') != null){
         $newImageName="";
@@ -65,7 +73,12 @@ class ClassController extends Controller
         $file->move($folderPath, $newImageName);
         $class->syllabus = $newImageName;
         }
-        $class->save();
+        if($class->save()){
+                $levels = new Levels;
+                $levels->class_id = $class->id;
+                $levels->name = implode(",",$request->levels);
+                $levels->save();
+        }
         return redirect('/')->with('message','Successfully created class.');
     }
 
@@ -150,5 +163,12 @@ class ClassController extends Controller
        $path = public_path(). '/syllabus/'. $class->syllabus;
        return response()->download($path, $class
                 ->original_filename, ['Content-Type' => $class->mime]);
+    }
+
+
+    public function actionSearch(Request $request)
+    {
+        $class = Classes::where('title',$request->search)->with(['college'])->paginate(5);
+        return view('class.index',compact('class'));
     }
 }

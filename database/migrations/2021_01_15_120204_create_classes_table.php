@@ -15,7 +15,8 @@ class CreateClassesTable extends Migration
     {
         Schema::create('classes', function (Blueprint $table) {
             $table->id();
-            $table->integer('college_id');
+            $table->unsignedBigInteger('college_id');
+            $table->foreign('college_id')->references('id')->on('colleges')->onDelete('cascade');
             $table->string('title')->nullable();
             $table->string('contact_number',50)->nullable();
             $table->string('email')->nullable();
